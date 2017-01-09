@@ -1,26 +1,21 @@
 package com.example.breezeebanner;
 
 import android.content.Context;
-import android.os.Handler;
-import android.os.Message;
-import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
-import android.view.MotionEvent;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 
 /**
  * Created by Administrator on 2017/1/9.
  */
 
-public class BreezeeBanner extends ViewPager {
-
-    private BreezeeAdapter adapter;
-    private ArrayList<Object> views;
-    private final static int AuthPlay = 0;
-
-
+public class BreezeeBanner extends RelativeLayout {
     public BreezeeBanner(Context context) {
         super(context);
     }
@@ -29,112 +24,67 @@ public class BreezeeBanner extends ViewPager {
         super(context, attrs);
     }
 
-    public void init(ArrayList<Object> views) {
-        this.views = new ArrayList<>();
-        if (views.size() > 1) {
-            ImageView imageViewHead = new ImageView(getContext());
-            imageViewHead.setImageDrawable(((ImageView) views.get(views.size() - 1)).getDrawable());
-            this.views.add(0, imageViewHead);
-            for (int i = 1; i < views.size() + 1; i++) {
-                this.views.add(i, views.get(i - 1));
-            }
-            ImageView imageViewFoot = new ImageView(getContext());
-            imageViewFoot.setImageDrawable(((ImageView) views.get(0)).getDrawable());
-            this.views.add(views.size() + 1, imageViewFoot);
-        } else {
-            this.views.addAll(views);
-        }
+    public BreezeeBanner(Context context, AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+    }
+
+    private BreezeeViewPager viewPager;
+    private final static
+    @android.support.annotation.IdRes
+    int viewPagerId = 0x951000;
+    private ArrayList<Object> views;
+    private ArrayList<View> points;
+
+    private void initView() {
+        viewPager = new BreezeeViewPager(getContext());
+        viewPager.setId(viewPagerId);
+        RelativeLayout.LayoutParams params = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        params.addRule(RelativeLayout.CENTER_IN_PARENT);
+        viewPager.setLayoutParams(params);
+        addView(viewPager);
+        viewPager.requestLayout();
+    }
+
+    public void init(ArrayList<Object> imgPaths) {
         initView();
-    }
-
-    public void initView() {
-        addOnPageChangeListener(onPageChangeListener);
-        setOffscreenPageLimit(this.views.size());
-        adapter = new BreezeeAdapter(this.views);
-        this.setAdapter(adapter);
-        setOverScrollMode(OVER_SCROLL_NEVER);
-        if (views.size() > 1) {
-            setCurrentItem(1, false);
+        views = new ArrayList<>();
+        for (int i = 0; i < imgPaths.size(); i++) {
+            views.add(initImagView());
         }
-        startPlaying();
+        points = initPoint(views.size());
+        Collections.reverse(points);
+        viewPager.init(views, imgPaths, points);
     }
 
-    public synchronized void startPlaying() {
-            handler.sendEmptyMessageDelayed(AuthPlay, 5000);
+    private ImageView initImagView() {
+        ImageView imageView = new ImageView(getContext());
+        imageView.setScaleType(ImageView.ScaleType.FIT_XY);
+        return imageView;
     }
 
-    public void showNextView() {
-        if (views == null || views.size() <= 1)
-            return;
-        setCurrentItem(BreezeeBanner.this.getCurrentItem() + 1, true);
-    }
-
-    private Handler handler = new Handler(new Handler.Callback() {
-        @Override
-        public boolean handleMessage(Message message) {
-            if (message.what == AuthPlay) {
-                    handler.sendEmptyMessageDelayed(AuthPlay, 5000);
-                    showNextView();
+    private ArrayList<View> initPoint(int num) {
+        ArrayList<View> points = new ArrayList<>();
+        for (int i = 0; i < num; i++) {
+            View view = new View(getContext());
+            view.setId(viewPagerId + i + 1);
+            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            params.width = DensityUtil.dip2px(getContext(), 5);
+            params.height = DensityUtil.dip2px(getContext(), 5);
+            if (i == 0) {
+                params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+            } else{
+                params.addRule(RelativeLayout.LEFT_OF,viewPagerId+i);
             }
-            return false;
+            params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+            params.bottomMargin = DensityUtil.dip2px(getContext(), 5);
+            params.rightMargin = DensityUtil.dip2px(getContext(), 15);
+            view.setLayoutParams(params);
+            view.setBackgroundResource(R.drawable.point_ffffff);
+            if (i==num-1)
+                view.setBackgroundResource(R.drawable.point_red);
+            points.add(view);
+            addView(view);
         }
-    });
-    private int currentPosition;
-    private boolean isChanging = false;
-    ViewPager.OnPageChangeListener onPageChangeListener = new OnPageChangeListener() {
-        @Override
-        public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-        }
-
-        @Override
-        public void onPageSelected(int position) {
-            currentPosition = position;
-        }
-
-        @Override
-        public void onPageScrollStateChanged(int state) {
-            if (views.size() > 1)
-                if (state == 1) {
-                } else if (state == 0) {
-                    currentPosition = BreezeeBanner.this.getCurrentItem();
-                    if (currentPosition + 1 == views.size()) {
-                        isChanging = true;
-                        setCurrentItem(1, false);
-                    } else if (currentPosition == 0) {
-                        isChanging = true;
-                        setCurrentItem(views.size() - 2, false);
-                    }
-                } else if (state == 2) {
-                }
-        }
-    };
-
-    @Override
-    public boolean onInterceptTouchEvent(MotionEvent ev) {
-        if (isChanging) {
-            if (BreezeeBanner.this.getCurrentItem() != 0 || BreezeeBanner.this.getCurrentItem() != views.size() - 1)
-                isChanging = false;
-            return false;
-        } else {
-            return super.onInterceptTouchEvent(ev);
-        }
-    }
-
-    @Override
-    public boolean onTouchEvent(MotionEvent ev) {
-        if (ev.getAction() == MotionEvent.ACTION_UP || ev.getAction() == MotionEvent.ACTION_MOVE) {
-            handler.removeMessages(AuthPlay);
-            startPlaying();
-        } else {
-            handler.removeMessages(AuthPlay);
-            if (isChanging) {
-                if (BreezeeBanner.this.getCurrentItem() != 0 || BreezeeBanner.this.getCurrentItem() != views.size() - 1)
-                    isChanging = false;
-                return false;
-            } else {
-                return super.onTouchEvent(ev);
-            }
-        }
-        return super.onTouchEvent(ev);
+        return points;
     }
 }

@@ -2,8 +2,11 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/BreezeeBanner.iml" filepath="$PROJECT_DIR$/BreezeeBanner.iml" />
       <module fileurl="file://$PROJECT_DIR$/BrezeeBN.iml" filepath="$PROJECT_DIR$/BrezeeBN.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/breezeebanner/breezeebanner.iml" filepath="$PROJECT_DIR$/breezeebanner/breezeebanner.iml" />
       <module fileurl="file://$PROJECT_DIR$/breezeebanner/breezeebanner.iml" filepath="$PROJECT_DIR$/breezeebanner/breezeebanner.iml" />
     </modules>
   </component>
