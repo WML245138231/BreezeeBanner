@@ -125,7 +125,6 @@ public class BreezeeBanner extends ViewPager {
         if (ev.getAction() == MotionEvent.ACTION_UP || ev.getAction() == MotionEvent.ACTION_MOVE) {
             handler.removeMessages(AuthPlay);
             startPlaying();
-            handler.sendEmptyMessageDelayed(AuthPlay, 5000);
         } else {
             handler.removeMessages(AuthPlay);
             if (isChanging) {
