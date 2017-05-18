@@ -18,6 +18,7 @@ import java.util.ArrayList;
  * Created by Administrator on 2017/1/9.
  */
 
+
 public class BreezeeViewPager extends ViewPager {
 
     private BreezeeAdapter adapter;
