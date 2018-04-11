@@ -1,15 +1,14 @@
-# BreezeeBanner
-#### 标准简化Banner
+
 ```
-    <com.example.breezeebanner.BreezeeBanner
+    <com.example.breezeebanner.XXXXxxx
         android:id="@+id/breezeeBanner"
         android:layout_width="match_parent"
         android:layout_height="260dp">
-     </com.example.breezeebanner.BreezeeBanner>
+     </com.example.breezeebanner.XXXXxxx>
 ```
 
 ```
-breezeeBanner= (BreezeeBanner) findViewById(R.id.breezeeBanner);
+Banner= findViewById(R.id.Banner);
 ArrayList<Object> imgPaths=new ArrayList<>();    
 imgPaths.add("https://xxxxx1")
 imgPaths.add("https://xxxxx2");
